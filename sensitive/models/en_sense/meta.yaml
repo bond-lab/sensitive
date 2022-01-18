@@ -11,7 +11,7 @@ flags:
  - 'LEAST'
 
 lexicons:
- - 'sensitive.txt'
+ - 'sensitive.tsv'
 
 
 
