@@ -2,22 +2,23 @@ import sensitive
 from sensitive.sensitive import SentimentAnalyzer
 
 sentences = ["VADER is smart, handsome, and funny.",
-             "VADER is pretty.",
-             "VADER is pretty!",
-             "VADER is pretty!!!",
-             "VADER is PRETTY!!!",
-             "VADER is pretty?",
-             "VADER is pretty???",
-             "SENSI is more pretty.",
+             "VADER is happy.",
+             "VADER is happy!",
+             "VADER is happy!!!",
+             "VADER is happy!!!",
+             "VADER is happy?",
+             "VADER is happy???",
+             "VADER is not happy.",
+             "SENSI is more happy.",
              "SENSI is prettier.",
-             "SENSI is very pretty.",
-             "This is unpretty.",
+             "SENSI is very happy.",
+             "This is unhappy.",
              "Wordnet is prettiest",
-             "The pretty wordnet has some problems.",
-             "The pretty wordnet has some PROBLEMS."]
+             "The happy wordnet has some problems.",
+             "The happy wordnet has some PROBLEMS."]
 
 analyzer = SentimentAnalyzer()
 
 for s in sentences:
-    score = analyzer.polarity_scores(s)
+    score = analyzer.polarity_scores(s)['compound']
     print(score, s)

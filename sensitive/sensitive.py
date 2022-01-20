@@ -277,13 +277,13 @@ class SentimentAnalyzer(object):
             
         return valence
 
-    
+
     def polarity_scores(self, text):
         """
         Return a float for sentiment strength based on the input text.
         Positive values are positive valence, negative value are negative
         valence.
-        """   
+        """  
         senses = disambiguate(text, en, morphy)
         print(senses)
         is_cap_diff = allcap_differential([w for (w, p, l, t) in senses])
