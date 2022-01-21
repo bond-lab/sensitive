@@ -13,6 +13,11 @@ flags:
 lexicons:
  - 'sensitive.tsv'
 
+boosters:
+ - 'wnboosters.tsv'
+
+negators:
+ - 'wnnegators.tsv'
 
 
 

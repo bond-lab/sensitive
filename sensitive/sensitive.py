@@ -32,9 +32,9 @@ morphy = Morphy(wn)
 ### Constants
 ###
 
-# (empirically derived mean sentiment intensity rating increase for booster words)
-B_INCR = 0.293
-B_DECR = -0.293
+# # (empirically derived mean sentiment intensity rating increase for booster words)
+# B_INCR = 0.293
+# B_DECR = -0.293
 
 # (empirically derived mean sentiment intensity rating increase for booster words)
 COMP_INCR = 0.1
@@ -42,7 +42,7 @@ SUPR_INCR = 0.2
 
 # (empirically derived mean sentiment intensity rating increase for using ALLCAPs to emphasize a word)
 C_INCR = 0.733
-N_SCALAR = -0.74
+#N_SCALAR = -0.74
 
 ### highlighters
 ### have a score for before and after
@@ -214,9 +214,26 @@ class SentimentAnalyzer(object):
         for lexfile in self.meta['lexicons']:
              self.lexicon.update(self.make_lex_dict(modpath, lexfile))
 
-        print(f"loaded model {model}")
-        ### 
- 
+
+        ### Boosters
+        self.booster = dict()
+
+        for lexfile in self.meta['boosters']:
+             self.booster.update(self.make_lex_dict(modpath, lexfile))
+
+        
+        ### Negators
+        self.negator = dict()
+
+        for lexfile in self.meta['negators']:
+             self.negator.update(self.make_lex_dict(modpath, lexfile))
+
+        print(f"""loaded model {model}: 
+Lexicons: {self.meta['lexicons']}
+Boosters: {self.meta['boosters']}
+Negators: {self.meta['negators']}""")
+
+        
     def read_meta(self, modpath, meta_file):
         """
         Read meta parameters for the model
