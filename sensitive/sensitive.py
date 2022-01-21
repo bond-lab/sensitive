@@ -228,6 +228,11 @@ class SentimentAnalyzer(object):
         for lexfile in self.meta['negators']:
              self.negator.update(self.make_lex_dict(modpath, lexfile))
 
+        ### make sure boosters and negators carry no sentiment     
+        for lex in self.lexicon:
+            if lex in self.negator or lex in self.booster:
+                self.lexicon[lex] = 0.0
+             
         print(f"""loaded model {model}: 
 Lexicons: {self.meta['lexicons']}
 Boosters: {self.meta['boosters']}
