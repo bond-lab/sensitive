@@ -37,8 +37,8 @@ morphy = Morphy(wn)
 # B_DECR = -0.293
 
 # (empirically derived mean sentiment intensity rating increase for booster words)
-COMP_INCR = 0.1
-SUPR_INCR = 0.2
+COMP_INCR = 0.3
+SUPR_INCR = 0.6
 
 # (empirically derived mean sentiment intensity rating increase for using ALLCAPs to emphasize a word)
 C_INCR = 0.733
