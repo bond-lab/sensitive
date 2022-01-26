@@ -20,7 +20,7 @@ morphy = Morphy(wn)
 ### Changes to the scores based on
 ### * punctuation  DONE
 ### * capitalization  DONE
-### * intensification
+### * intensification  DONE
 ### * negation
 ### * conjunctions (contrastive)
 ### * comparatives, superlatives    # DONE, FIXME INCREMENTS
@@ -313,23 +313,31 @@ Negators: {self.meta['negators']}""")
 
         sentiments = list()
 
-        for i, (w, p, l, t)  in enumerate(senses): 
+        for i, (w, p, l, t)  in enumerate(senses):
+            # see if this word carries sentiment
             local = self.sentiment_valence(i, senses, is_cap_diff)
-            if i > 1 and (senses[i-1] in self.booster):         #wasn't sure if the i formulas actually referenced the boosters before word (i)
-                local = increment(local, self.booster[wn.word]*0.95)       #wasn't sure if local here still works
-            if i > 2 and (senses[i-2] in self.booster): 
-                local = increment(local, self.booster[wn.word]*0.95) 
-            if i > 3 and (senses[i-3] in self.booster):
-                local = increment(local, self.booster[wn.word]*0.9) 
-
-            if i > 1 and (senses[i-1] in self.negator):
-                local = stretch(local,self.negator[wn.word])
-            if i > 2 and (senses[i-2] in self.negator):
-                local = stretch(local,self.negator[wn.word])
-            if i > 3 and (senses[i-3] in self.negator):
-                local = stretch(local,self.negator[wn.word])
+            if not local: ### if not, keep going
+                continue
+            # check for boosts and negation
+            for j in range(1,4): # check back three words
+                if i - j < 0:    # if the word exists 
+                    continue
+                #print(i, senses[i], senses[i-j])
+                mod = senses[i-j][3] # This is the concept id
+                if mod in  self.booster:
+                    local = increment(local,
+                                      self.booster[mod]*(1.05 - j*.05))
+                    ### diminish a little further back: 1, 0.95, 0.90
+            for j in range(1,4): # check back three words
+                if i - j < 0:    # if the word exists 
+                    continue
+                #print(i, senses[i], senses[i-j])
+                mod = senses[i-j][3] # This is the concept id
+                if mod in  self.negator:
+                    local = stretch(local, self.negator[mod])
             sentiments.append(local)
 
+        ### check punctuation of the whole sentence
         punct_score = punctuation_emphasis(text)
 
         valence_dict = score_valence(sentiments, punct_score)
