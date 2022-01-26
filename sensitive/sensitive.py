@@ -234,9 +234,9 @@ class SentimentAnalyzer(object):
                 self.lexicon[lex] = 0.0
              
         print(f"""loaded model {model}: 
-Lexicons: {self.meta['lexicons']}
-Boosters: {self.meta['boosters']}
-Negators: {self.meta['negators']}""")
+Lexicons: {self.meta['lexicons']} ({len(self.lexicon):,d} concepts)
+Boosters: {self.meta['boosters']} ({len(self.booster):,d} concepts)
+Negators: {self.meta['negators']} ({len(self.negator):,d} concepts)""")
 
         
     def read_meta(self, modpath, meta_file):
