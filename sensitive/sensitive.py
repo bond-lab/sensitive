@@ -229,7 +229,7 @@ class SentimentAnalyzer(object):
              self.negator.update(self.make_lex_dict(modpath, lexfile))
 
         ### make sure boosters and negators carry no sentiment     
-        for lex in self.lexicon:
+        for lex in self.lexicon:                #played with this but only managed to get scores from sensitive.
             if lex in self.negator or lex in self.booster:
                 self.lexicon[lex] = 0.0
              
@@ -315,6 +315,19 @@ Negators: {self.meta['negators']}""")
 
         for i, (w, p, l, t)  in enumerate(senses): 
             local = self.sentiment_valence(i, senses, is_cap_diff)
+            if i > 1 and (senses[i-1] in self.booster):         #wasn't sure if the i formulas actually referenced the boosters before word (i)
+                local = increment(local, self.booster[wn.word]*0.95)       #wasn't sure if local here still works
+            if i > 2 and (senses[i-2] in self.booster): 
+                local = increment(local, self.booster[wn.word]*0.95) 
+            if i > 3 and (senses[i-3] in self.booster):
+                local = increment(local, self.booster[wn.word]*0.9) 
+
+            if i > 1 and (senses[i-1] in self.negator):
+                local = stretch(local,self.negator[wn.word])
+            if i > 2 and (senses[i-2] in self.negator):
+                local = stretch(local,self.negator[wn.word])
+            if i > 3 and (senses[i-3] in self.negator):
+                local = stretch(local,self.negator[wn.word])
             sentiments.append(local)
 
         punct_score = punctuation_emphasis(text)
