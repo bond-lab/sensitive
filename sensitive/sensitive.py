@@ -307,7 +307,7 @@ Negators: {self.meta['negators']} ({len(self.negator):,d} concepts)""")
         valence.
         """  
         senses = disambiguate(text, en, morphy)
-        print(senses)
+        #print(senses)
         is_cap_diff = allcap_differential([w for (w, p, l, t) in senses])
         ### pad with beginners?
 
@@ -341,7 +341,7 @@ Negators: {self.meta['negators']} ({len(self.negator):,d} concepts)""")
         punct_score = punctuation_emphasis(text)
 
         valence_dict = score_valence(sentiments, punct_score)
-        print(sentiments)
+        #print(sentiments)
 
         return valence_dict
                 
