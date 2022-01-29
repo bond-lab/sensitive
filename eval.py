@@ -22,7 +22,8 @@ def eval_senti(evalfile):
       e_score_list.append(e_score)
       base_data.append((score, e_score, sentence))
    #print(base_data) #output sentiment scores
-   print(evalfile, stats.pearsonr(score_list, e_score_list), stats.spearmanr(score_list, e_score_list, axis=0, nan_policy='propagate'))	
+   print(evalfile)
+   print(stats.pearsonr(score_list, e_score_list), stats.spearmanr(score_list, e_score_list, axis=0, nan_policy='propagate'))	
 
 
 #eval_senti('6humanCodedDataSets\SS_1041MySpace.txt')
@@ -42,7 +43,8 @@ def eval_vader(evalfile):
       e_score_list.append(e_score)
       #base_data.append((score, e_score, sentence))
    #print(base_data) #output sentiment scores
-   print(evalfile, stats.pearsonr(score_list, e_score_list), stats.spearmanr(score_list, e_score_list, axis=0, nan_policy='propagate'))	
+   print(evalfile)
+   print(stats.pearsonr(score_list, e_score_list), stats.spearmanr(score_list, e_score_list, axis=0, nan_policy='propagate'))	
    
 eval_vader('vaderSentiment\_additional_resources\hutto_ICWSM_2014\_amazonReviewSnippets_GroundTruth.txt') 
 eval_vader('vaderSentiment\_additional_resources\hutto_ICWSM_2014\movieReviewSnippets_GroundTruth.txt')

@@ -190,6 +190,21 @@ def _amplify_qm(text):
             qm_amplifier = 0.96
     return qm_amplifier
 
+def _but_check(senses, sentiments): #could not really understand the code from original VADER and tried to import to there with changes but no change in score in new test
+    # check for modification in sentiment due to contrastive conjunction 'but'
+    for i, (w, p, l, t)  in enumerate(senses):
+        if 'but' in i:
+            bi = senses.index('but')
+        for sentiment in sentiments:
+            si = sentiments.index(sentiment)
+            if si < bi:
+                sentiments.pop(si)
+                sentiments.insert(si, sentiment * 0.5)
+            elif si > bi:
+                sentiments.pop(si)
+                sentiments.insert(si, sentiment * 1.5)
+        return sentiments
+
 def punctuation_emphasis(text):
     # add emphasis from exclamation points and question marks
     ep_amplifier = _amplify_ep(text)
