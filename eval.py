@@ -5,6 +5,11 @@ import fileinput
 import sensitive
 from sensitive.sensitive import SentimentAnalyzer
 from scipy import stats
+import vaderSentiment
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
+
+datadir = '/home/bond/git/vadermulti/additional_resources/hutto_ICWSM_2014/'
 
 #os.path
 
@@ -38,15 +43,28 @@ def eval_vader(evalfile):
    for l in base_file:
       index, score, sentence = l.strip().split('\t')
       e_score = analyzer.polarity_scores(sentence)['compound']
-      score_list.append(float(score))
+      gold= float(score)/4
+      score_list.append(gold)
       e_score_list.append(e_score)
+      if abs(gold-e_score) > 1:
+         print('BAD', index, gold, f'{e_score:.3f}',
+         sentence,
+         sep='\t')
       #base_data.append((score, e_score, sentence))
    #print(base_data) #output sentiment scores
-   print(evalfile, stats.pearsonr(score_list, e_score_list), stats.spearmanr(score_list, e_score_list, axis=0, nan_policy='propagate'))	
    
-eval_vader('vaderSentiment\_additional_resources\hutto_ICWSM_2014\_amazonReviewSnippets_GroundTruth.txt') 
-eval_vader('vaderSentiment\_additional_resources\hutto_ICWSM_2014\movieReviewSnippets_GroundTruth.txt')
-eval_vader('vaderSentiment\_additional_resources\hutto_ICWSM_2014\_nytEditorialSnippets_GroundTruth.txt')
-eval_vader('vaderSentiment\_additional_resources\hutto_ICWSM_2014\_tweets_GroundTruth.txt')
+   
+   print(evalfile, stats.pearsonr(score_list, e_score_list), stats.spearmanr(score_list, e_score_list, axis=0, nan_policy='propagate'))	
+
+
+files = {'Amazon Reviews': 'amazonReviewSnippets_GroundTruth.txt',
+         'Movie Reviews': 'movieReviewSnippets_GroundTruth.txt',
+         'NYT Editorials':'nytEditorialSnippets_GroundTruth.txt',
+         'Tweets':'tweets_GroundTruth.txt'
+}
+   
+for n,f in files.items():
+   print(n)
+   eval_vader(f'{datadir}{f}')
 
 
