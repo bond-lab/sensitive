@@ -25,7 +25,9 @@ sentences = [#"VADER is smart, handsome, and funny.",
     "The happy wordnet has no problems.",
     "The happy wordnet has some PROBLEMS.",
     "The happy wordnet has NO PROBLEMS.",
-    "The happy wordnet is happy but has some problems"
+    "The happy wordnet is happy but has some problems",
+    "He will foil my plans.",
+    "He has a foil."
 ]
 
 analyzer = SentimentAnalyzer()

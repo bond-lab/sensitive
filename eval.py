@@ -2,6 +2,8 @@ import nltk
 import fileinput
 #import string
 #import re
+from vaderSentiment import vaderSentiment
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import sensitive
 from sensitive.sensitive import SentimentAnalyzer
 from scipy import stats
@@ -32,17 +34,23 @@ def eval_senti(evalfile):
 
 def eval_vader(evalfile):
    base_data = []
+   diff_list = []
    score_list = []
    e_score_list = []
    base_file = open(evalfile).readlines()
    analyzer = SentimentAnalyzer()
+   v_analyzer = SentimentIntensityAnalyzer
    for l in base_file:
       index, score, sentence = l.strip().split('\t')
       e_score = analyzer.polarity_scores(sentence)['compound']
+      v_score = v_analyzer.polarity_scores(sentence)['compound']
       score_list.append(float(score))
       e_score_list.append(e_score)
-      #base_data.append((score, e_score, sentence))
-   #print(base_data) #output sentiment scores
+      base_data.append((score, e_score, v_score, sentence))
+      if abs(e_score - v_score) > 0.5:
+         diff_list.append(sentence)
+   print(base_data) #output sentiment scores
+   print(diff_list)
    print(evalfile)
    print(stats.pearsonr(score_list, e_score_list), stats.spearmanr(score_list, e_score_list, axis=0, nan_policy='propagate'))	
    
