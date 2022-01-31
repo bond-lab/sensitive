@@ -10,15 +10,21 @@ flags:
  - 'BUT'
  - 'LEAST'
 
-lexicons:
+lexicons: 
  - 'sensitive.tsv'
 
+wlexicons:
+ - 'vader.tsv'
+ - 'esd-lex.tsv'
+
 boosters:
- - 'wnboosters.tsv'
+ - 'boosters.tsv'
 
 negators:
- - 'wnnegators.tsv'
+ - 'negators.tsv'
 
+wnegators:
+ - 'vader-negators.tsv'
 
 
 citation: |

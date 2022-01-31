@@ -48,6 +48,9 @@ C_INCR = 0.733
 ### have a score for before and after
 ### e.g. (but,      0.5, 1.5) #VADER, SOCAL 1, 2
 ###      (although, 1.0, 0.5) #SOCAL
+
+contrasts = {'but', 'however'}
+
 # yet
 # nevertheless
 # nonetheless
@@ -190,6 +193,17 @@ def _amplify_qm(text):
             qm_amplifier = 0.96
     return qm_amplifier
 
+def _but_check(senses, sentiments): #could not really understand the code from original VADER and tried to import to there with changes but no change in score in new test
+    # check for modification in sentiment due to contrastive conjunction 'but'
+    for i, (w, p, l, t)  in enumerate(senses):
+        if l in contrasts:
+            for j, sentiment in enumerate(sentiments):
+                if j < i:
+                    sentiments[j]= sentiment * 0.5
+                elif j > i:
+                    sentiments[j] = sentiment * 1.5
+    return sentiments
+
 def punctuation_emphasis(text):
     # add emphasis from exclamation points and question marks
     ep_amplifier = _amplify_ep(text)
@@ -214,6 +228,11 @@ class SentimentAnalyzer(object):
         for lexfile in self.meta['lexicons']:
              self.lexicon.update(self.make_lex_dict(modpath, lexfile))
 
+        self.wlexicon = dict()
+
+        for lexfile in self.meta['wlexicons']:
+             self.wlexicon.update(self.make_lex_dict(modpath, lexfile))
+
 
         ### Boosters
         self.booster = dict()
@@ -228,6 +247,11 @@ class SentimentAnalyzer(object):
         for lexfile in self.meta['negators']:
              self.negator.update(self.make_lex_dict(modpath, lexfile))
 
+        self.wnegator = dict()
+
+        for lexfile in self.meta['wnegators']:
+             self.wnegator.update(self.make_lex_dict(modpath, lexfile))
+
         ### make sure boosters and negators carry no sentiment     
         for lex in self.lexicon:                #played with this but only managed to get scores from sensitive.
             if lex in self.negator or lex in self.booster:
@@ -235,6 +259,7 @@ class SentimentAnalyzer(object):
              
         print(f"""loaded model {model}: 
 Lexicons: {self.meta['lexicons']} ({len(self.lexicon):,d} concepts)
+Word Lex: {self.meta['wlexicons']} ({len(self.wlexicon):,d} concepts)
 Boosters: {self.meta['boosters']} ({len(self.booster):,d} concepts)
 Negators: {self.meta['negators']} ({len(self.negator):,d} concepts)""")
 
@@ -273,9 +298,11 @@ Negators: {self.meta['negators']} ({len(self.negator):,d} concepts)""")
         find the lexical valence 
         apply any morphological changes
         """
+
         if t in self.lexicon:
             valence = self.lexicon[t]
-            
+
+        
         if valence:
             if p == 'JJR':  # comparative
                 valence = increment(valence, COMP_INCR)
@@ -291,6 +318,10 @@ Negators: {self.meta['negators']} ({len(self.negator):,d} concepts)""")
         ### get the base valence, with morphological changes
         if t in self.lexicon:
             valence = self.lexical_valence(w, p, l, t)
+            ## or get the word lexicon, if we don't know the sense
+        elif w in self.wlexicon:
+            valence = self.wlexicon[w]
+    
 
         ### CAPITALIZATION
         if valence and is_cap_diff and \
@@ -307,7 +338,7 @@ Negators: {self.meta['negators']} ({len(self.negator):,d} concepts)""")
         valence.
         """  
         senses = disambiguate(text, en, morphy)
-        #print(senses)
+        print(senses)
         is_cap_diff = allcap_differential([w for (w, p, l, t) in senses])
         ### pad with beginners?
 
@@ -317,31 +348,38 @@ Negators: {self.meta['negators']} ({len(self.negator):,d} concepts)""")
             # see if this word carries sentiment
             local = self.sentiment_valence(i, senses, is_cap_diff)
             if not local: ### if not, keep going
-                continue
-            # check for boosts and negation
-            for j in range(1,4): # check back three words
-                if i - j < 0:    # if the word exists 
-                    continue
-                #print(i, senses[i], senses[i-j])
-                mod = senses[i-j][3] # This is the concept id
-                if mod in  self.booster:
-                    local = increment(local,
-                                      self.booster[mod]*(1.05 - j*.05))
+                sentiments.append(0.0)
+            else:
+                # check for boosts and negation
+                for j in range(1,4): # check back three words
+                    if i - j < 0:    # if the word exists 
+                        continue
+                    #print(i, senses[i], senses[i-j])
+                    mod = senses[i-j][3] # This is the concept id
+                    if mod in  self.booster:
+                        local = increment(local,
+                                          self.booster[mod]*(1.05 - j*.05))
                     ### diminish a little further back: 1, 0.95, 0.90
-            for j in range(1,4): # check back three words
-                if i - j < 0:    # if the word exists 
-                    continue
-                #print(i, senses[i], senses[i-j])
-                mod = senses[i-j][3] # This is the concept id
-                if mod in  self.negator:
-                    local = stretch(local, self.negator[mod])
-            sentiments.append(local)
+                for j in range(1,4): # check back three words
+                    if i - j < 0:    # if the word exists 
+                        continue
+                    #print(i, senses[i], senses[i-j])
+                    mod_c = senses[i-j][3] # This is the concept id
+                    mod_w = senses[i-j][0] # This is the word
+                    if mod_c in  self.negator:
+                        local = stretch(local, self.negator[mod_c])
+                    elif mod_w in  self.wnegator:
+                        local = stretch(local, self.wnegator[mod_w])
+                        
+                sentiments.append(local)
 
         ### check punctuation of the whole sentence
         punct_score = punctuation_emphasis(text)
-
-        valence_dict = score_valence(sentiments, punct_score)
         #print(sentiments)
+        _but_check(senses, sentiments)
+        print(sentiments)
+        valence_dict = score_valence(sentiments, punct_score)
+
 
         return valence_dict
                 

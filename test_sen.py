@@ -24,7 +24,14 @@ sentences = [#"VADER is smart, handsome, and funny.",
     "The happy wordnet has some problems.",
     "The happy wordnet has no problems.",
     "The happy wordnet has some PROBLEMS.",
-    "The happy wordnet has NO PROBLEMS."
+    "The happy wordnet has NO PROBLEMS.",
+    "Wordnet is happy but has some problems",
+    "Wordnet has some problems however is happy.",
+    "He will foil my plans.",
+    "He has a foil.",
+    "Make sure you :) or :D today!",  # emoticons handled
+    "Catch utf-8 emoji such as 💘 and 💋 and 😁", # emojis handled
+    "Today only kinda sux! But I'll get by, lol", # slang
 ]
 
 analyzer = SentimentAnalyzer()

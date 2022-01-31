@@ -1,6 +1,9 @@
 import nltk
-from nltk.tokenize import word_tokenize
+#from nltk.tokenize import word_tokenize
+from nltk.tokenize.casual import TweetTokenizer 
 from nltk.tag import pos_tag
+
+t = TweetTokenizer()
 
 def pos2wn (pos):
     """Take PTB POS and return wordnet POS
@@ -70,7 +73,8 @@ def disambiguate (sent, wordnet, morphy):
     """
     disambiguate a sentence
     """
-    toks = word_tokenize(sent)
+    #toks = word_tokenize(sent)
+    toks = t.tokenize(sent)
     tags = pos_tag(toks)
     lemmas = lemmatize(tags, morphy)
     senses = mfs(wordnet, lemmas)
