@@ -11,7 +11,9 @@ flags:
  - 'LEAST'
 
 lexicons: 
- - 'sensitive.tsv'
+ - 'sentiwordnet.tsv'
+# - 'mlsenticon.tsv'
+# - 'sensitive.tsv'
 
 wlexicons:
  - 'vader.tsv'

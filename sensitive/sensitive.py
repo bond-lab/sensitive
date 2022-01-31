@@ -288,8 +288,10 @@ Negators: {self.meta['negators']} ({len(self.negator):,d} concepts)""")
             line = line.strip()
             if not line or line.startswith('#'):
                 continue
-            (word, measure) = line.strip().split('\t')[0:2]
-            lex_dict[word] = float(measure)
+            row =  line.strip().split('\t')
+            if len(row) > 2:
+                (word, measure) = line.strip().split('\t')[0:2]
+                lex_dict[word] = float(measure)
         return lex_dict
 
     
