@@ -5,6 +5,9 @@ from nltk.tag import pos_tag
 
 t = TweetTokenizer()
 
+
+mfs_tweak = {'fantastic':'i9186'}
+
 def pos2wn (pos):
     """Take PTB POS and return wordnet POS
        a, v, n, r, x or None 'don't tag'
@@ -57,7 +60,10 @@ def mfs (wordnet, lemmas):
     for (w, t, l) in lemmas:
         pos = pos2wn(t)
         sense = None
-        if pos: 
+        ### tweak 
+        if l in mfs_tweak:
+            sense = mfs_tweak[l]
+        elif pos: 
             senses = wordnet.senses(l, pos)
             if len(senses) == 1:
                 sense = senses[0].synset().ili.id
