@@ -14,7 +14,7 @@ import wn
 from wn.morphy import Morphy
 
 en = wn.Wordnet('omw-en:1.4')
-morphy = Morphy(wn)
+morphy = Morphy(en)
 
 ###
 ### Changes to the scores based on
@@ -255,6 +255,7 @@ class SentimentAnalyzer(object):
         ### make sure boosters and negators carry no sentiment     
         for lex in self.lexicon:                #played with this but only managed to get scores from sensitive.
             if lex in self.negator or lex in self.booster:
+                #print('setting to zero:', lex)
                 self.lexicon[lex] = 0.0
              
         print(f"""loaded model {model}: 
@@ -284,12 +285,13 @@ Negators: {self.meta['negators']} ({len(self.negator):,d} concepts)""")
         """
         lex_dict = {}
         fh = open_text(modpath, lexicon_file)
+        print(modpath, lexicon_file)
         for line in fh:
             line = line.strip()
             if not line or line.startswith('#'):
                 continue
-            row =  line.strip().split('\t')
-            if len(row) > 2:
+            row =  line.split('\t')
+            if len(row) >= 2:
                 (word, measure) = line.strip().split('\t')[0:2]
                 lex_dict[word] = float(measure)
         return lex_dict
